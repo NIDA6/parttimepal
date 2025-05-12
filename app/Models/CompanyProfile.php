@@ -20,7 +20,6 @@ class CompanyProfile extends Model
         'company_email',
         'location',
         'phone_number',
-        'requirements',
     ];
 
     protected $casts = [
