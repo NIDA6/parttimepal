@@ -24,11 +24,13 @@ class CompanyProfileController extends Controller
     {
         $validated = $request->validate([
             'company_name' => ['required', 'string', 'max:255'],
-            'company_description' => ['required', 'string'],
-            'company_website' => ['nullable', 'url', 'max:255'],
-            'company_location' => ['required', 'string', 'max:255'],
-            'company_industry' => ['required', 'string', 'max:255'],
-            'company_size' => ['required', 'string', 'max:255'],
+            'phone' => ['required', 'string', 'max:20'],
+            'address' => ['required', 'string', 'max:255'],
+            'description' => ['required', 'string'],
+            'website' => ['nullable', 'url', 'max:255'],
+            'establish_date' => ['required', 'date'],
+            'url' => ['nullable', 'array'],
+            'url.*' => ['nullable', 'url', 'max:255'],
         ]);
 
         try {
@@ -41,11 +43,11 @@ class CompanyProfileController extends Controller
                 // Update 
                 $profile->update([
                     'company_name' => $validated['company_name'],
-                    'company_description' => $validated['company_description'],
-                    'company_website' => $validated['company_website'],
-                    'company_location' => $validated['company_location'],
-                    'company_industry' => $validated['company_industry'],
-                    'company_size' => $validated['company_size'],
+                    'description' => $validated['description'],
+                    'website_url' => $validated['website'],
+                    'location' => $validated['address'],
+                    'phone_number' => $validated['phone'],
+                    'establish_date' => $validated['establish_date'],
                 ]);
 
                 Log::info('Profile updated', [
@@ -58,11 +60,11 @@ class CompanyProfileController extends Controller
                 $profile = CompanyProfile::create([
                     'user_id' => $user->id,
                     'company_name' => $validated['company_name'],
-                    'company_description' => $validated['company_description'],
-                    'company_website' => $validated['company_website'],
-                    'company_location' => $validated['company_location'],
-                    'company_industry' => $validated['company_industry'],
-                    'company_size' => $validated['company_size'],
+                    'description' => $validated['description'],
+                    'website_url' => $validated['website'],
+                    'location' => $validated['address'],
+                    'phone_number' => $validated['phone'],
+                    'establish_date' => $validated['establish_date'],
                     'company_email' => $user->email,
                 ]);
 
@@ -73,10 +75,26 @@ class CompanyProfileController extends Controller
                 ]);
             }
 
+            // Handle social media links
+            if (!empty($validated['url'])) {
+                foreach ($validated['url'] as $url) {
+                    if (!empty($url)) {
+                        $profile->socialMedia()->create([
+                            'platform' => 'Social Media',
+                            'url' => $url,
+                        ]);
+                    }
+                }
+            }
+
             DB::commit();
             return redirect()->route('dashboard')->with('success', 'Profile updated successfully!');
         } catch (\Exception $e) {
             DB::rollBack();
+            Log::error('Profile creation/update failed', [
+                'error' => $e->getMessage(),
+                'user_id' => $user->id
+            ]);
             return back()->withErrors(['error' => 'Failed to update profile. Please try again.']);
         }
     }
@@ -148,5 +166,15 @@ class CompanyProfileController extends Controller
             DB::rollBack();
             return back()->withErrors(['error' => 'Failed to update profile. Please try again.']);
         }
+    }
+
+    public function show(CompanyProfile $companyProfile): View
+    {
+        // Load the relationships without the status filter
+        $companyProfile->load(['socialMedia', 'jobListings' => function($query) {
+            $query->orderBy('created_at', 'desc');
+        }]);
+
+        return view('profile.company.show', compact('companyProfile'));
     }
 } 

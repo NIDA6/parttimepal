@@ -1,3 +1,21 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Fix browser compatibility issues */
+html {
+    -webkit-text-size-adjust: 100%;
+    -moz-text-size-adjust: 100%;
+    -ms-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+}
+
+/* Ensure buttons and links are accessible */
+button, a {
+    cursor: pointer;
+}
+
+button:focus, a:focus {
+    outline: 2px solid #4f46e5;
+    outline-offset: 2px;
+}

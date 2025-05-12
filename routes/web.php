@@ -1,6 +1,11 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\JobListingController;
+use App\Http\Controllers\ApplicationController;
+use App\Http\Controllers\Profile\CompanyProfileController;
+use App\Http\Controllers\Profile\JobseekerProfileController;
+use App\Http\Controllers\Profile\JobPostController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {

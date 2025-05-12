@@ -4,10 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Notifications\Notifiable;
+use App\Notifications\JobseekerShortlisted;
 
 class JobListing extends Model
 {
-    use HasFactory;
+    use HasFactory, Notifiable;
 
     protected $fillable = [
         'company_profile_id',
@@ -39,5 +41,15 @@ class JobListing extends Model
     public function getRouteKeyName()
     {
         return 'id';
+    }
+
+    public function notifyJobseeker($jobseeker)
+    {
+        $jobseeker->notify(new JobseekerShortlisted($this->title, $this->id));
+    }
+
+    public function notifyCompany($companyUser)
+    {
+        $companyUser->notify(new JobseekerShortlisted($this->title, $this->id));
     }
 }

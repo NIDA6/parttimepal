@@ -3,9 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\JobListing;
-use App\Models\Application;
+use App\Models\JobApplication;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class JobListingController extends Controller
 {
@@ -30,10 +31,10 @@ class JobListingController extends Controller
             'description' => 'required|string',
             'requirements' => 'required|string',
             'responsibilities' => 'required|string',
-            'salary' => 'required|string|max:255',
-            'job_time' => 'required|string|max:255',
+            'salary' => 'required|numeric',
+            'job_time' => 'required|string',
             'additional_message' => 'nullable|string',
-            
+            'application_link' => 'required|url',
         ]);
 
         $validated['company_profile_id'] = Auth::user()->companyProfile->id;
@@ -45,7 +46,6 @@ class JobListingController extends Controller
 
     public function show(JobListing $jobListing)
     {
-        $jobListing->load('companyProfile');
         return view('job-listings.show', compact('jobListing'));
     }
 
@@ -71,8 +71,8 @@ class JobListingController extends Controller
             'description' => 'required|string',
             'requirements' => 'required|string',
             'responsibilities' => 'required|string',
-            'salary' => 'required|string|max:255',
-            'job_time' => 'required|string|max:255',
+            'salary' => 'required|numeric',
+            'job_time' => 'required|string',
             'additional_message' => 'nullable|string',
             'application_link' => 'required|url',
         ]);
@@ -85,58 +85,51 @@ class JobListingController extends Controller
 
     public function apply(Request $request, JobListing $jobListing)
     {
+        \Log::info('Apply method called', [
+            'user_id' => auth()->id(),
+            'user_role' => auth()->user()->role,
+            'job_listing_id' => $jobListing->id,
+            'request_method' => $request->method()
+        ]);
+
         // Check if user is a jobseeker
-        if (strtolower(auth()->user()->role) !== 'jobseeker') {
+        if (auth()->user()->role !== 'Jobseeker') {
+            \Log::warning('Non-jobseeker tried to apply', [
+                'user_id' => auth()->id(),
+                'user_role' => auth()->user()->role
+            ]);
             return redirect()->route('dashboard')->with('error', 'Only jobseekers can apply for jobs.');
         }
 
         // For GET requests, show the application form
         if ($request->isMethod('get')) {
-            try {
-                $jobListing->load('companyProfile');
-                return view('job-listings.apply', compact('jobListing'));
-            } catch (\Exception $e) {
-                \Log::error('Error showing apply form: ' . $e->getMessage());
-                return redirect()->back()->with('error', 'There was an error loading the application form. Please try again.');
-            }
+            \Log::info('Showing application form');
+            return view('job-listings.apply', compact('jobListing'));
         }
 
         // For POST requests, handle the form submission
         $validated = $request->validate([
-            'name' => 'required|string|max:255',
+            'phone' => 'required|string|max:20',
             'cover_letter' => 'required|string|min:50',
-            'experience' => 'nullable|string',
+            'resume' => 'required|file|mimes:pdf,doc,docx|max:10240', // Max 10MB
             'additional_notes' => 'nullable|string',
-            'application_link' => 'required|file|mimes:pdf,doc,docx|max:10240', // Max 10MB
         ]);
 
-        try {
-            // Handle file upload
-            if ($request->hasFile('application_link')) {
-                $file = $request->file('application_link');
-                $fileName = time() . '_' . $file->getClientOriginalName();
-                $filePath = $file->storeAs('resumes', $fileName, 'public');
-            }
+        // Store the resume file
+        $resumePath = $request->file('resume')->store('resumes', 'public');
 
-            // Create the application in the existing table
-            $application = Application::create([
-                'job_listing_id' => $jobListing->id,
-                'user_id' => auth()->id(),
-                'name' => $validated['name'],
-                'cover_letter' => $validated['cover_letter'],
-                'experience' => $validated['experience'],
-                'additional_notes' => $validated['additional_notes'],
-                'application_link' => $filePath
-            ]);
+        // Create the job application
+        JobApplication::create([
+            'job_listing_id' => $jobListing->id,
+            'user_id' => auth()->id(),
+            'phone' => $validated['phone'],
+            'cover_letter' => $validated['cover_letter'],
+            'resume_path' => $resumePath,
+            'additional_notes' => $validated['additional_notes'],
+            'status' => 'pending',
+        ]);
 
-            // After successful submission, redirect to dashboard
-            return redirect()->route('dashboard')
-                ->with('success', 'Your application has been submitted successfully!');
-        } catch (\Exception $e) {
-            \Log::error('Application submission error: ' . $e->getMessage());
-            return redirect()->back()
-                ->withInput()
-                ->with('error', 'There was an error submitting your application. Please try again.');
-        }
+        return redirect()->route('job-listings.show', $jobListing)
+            ->with('success', 'Your application has been submitted successfully!');
     }
 }
