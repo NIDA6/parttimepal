@@ -14,32 +14,29 @@
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6">
                     <div class="mb-6">
-                        <h3 class="text-lg font-medium text-gray-900">{{ $jobListing->companyProfile->company_name }}</h3>
-                        <p class="text-sm text-gray-600">{{ $jobListing->companyProfile->location }}</p>
+                        <h3 class="text-lg font-medium text-gray-900">{{ $jobListing->companyProfile->company_name ?? 'N/A' }}</h3>
+                        <p class="text-sm text-gray-600">{{ $jobListing->companyProfile->location ?? 'N/A' }}</p>
                     </div>
 
                     <form action="{{ route('job-listings.apply', $jobListing) }}" method="POST" enctype="multipart/form-data" class="space-y-6">
                         @csrf
                         
-                        <!-- Full Name -->
+                        <!-- Phone Number -->
                         <div>
-                            <label for="name" class="block text-sm font-medium text-gray-700">Full Name</label>
+                            <label for="phone" class="block text-sm font-medium text-gray-700">Phone Number</label>
                             <input
-                                type="text"
-                                id="name"
-                                name="name"
-                                value="{{ old('name') }}"
+                                type="tel"
+                                id="phone"
+                                name="phone"
+                                value="{{ old('phone') }}"
                                 class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                                placeholder="Enter your full name"
+                                placeholder="Enter your phone number"
                                 required
                             >
-                            @error('name')
+                            @error('phone')
                                 <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                             @enderror
                         </div>
-
-                
-                        
 
                         <!-- Cover Letter -->
                         <div>
@@ -57,17 +54,24 @@
                             @enderror
                         </div>
 
-                        <!-- Experience -->
+                        <!-- Resume/CV Upload -->
                         <div>
-                            <label for="experience" class="block text-sm font-medium text-gray-700">Experience (if any)</label>
-                            <textarea
-                                id="experience"
-                                name="experience"
-                                rows="3"
-                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                                placeholder="Enter your work experience (e.g., Company, Position, Duration)"
-                            >{{ old('experience') }}</textarea>
-                            @error('experience')
+                            <label for="resume" class="block text-sm font-medium text-gray-700">Resume/CV</label>
+                            <input
+                                type="file"
+                                id="resume"
+                                name="resume"
+                                class="mt-1 block w-full text-sm text-gray-500
+                                    file:mr-4 file:py-2 file:px-4
+                                    file:rounded-full file:border-0
+                                    file:text-sm file:font-semibold
+                                    file:bg-indigo-50 file:text-indigo-700
+                                    hover:file:bg-indigo-100"
+                                accept=".pdf,.doc,.docx"
+                                required
+                            >
+                            <p class="mt-1 text-sm text-gray-500">Upload your resume or CV (PDF, DOC, or DOCX format)</p>
+                            @error('resume')
                                 <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                             @enderror
                         </div>
@@ -87,37 +91,15 @@
                             @enderror
                         </div>
 
-                        <!-- Application Link -->
-                        <div>
-                            <label for="application_link" class="block text-sm font-medium text-gray-700">Upload Resume/CV (Required)</label>
-                            <input
-                                type="file"
-                                id="application_link"
-                                name="application_link"
-                                class="mt-1 block w-full text-sm text-gray-500
-                                    file:mr-4 file:py-2 file:px-4
-                                    file:rounded-full file:border-0
-                                    file:text-sm file:font-semibold
-                                    file:bg-pink-50 file:text-pink-700
-                                    hover:file:bg-pink-100"
-                                accept=".pdf,.doc,.docx"
-                                required
-                            >
-                            <p class="mt-1 text-sm text-gray-500">Upload your resume or CV (PDF, DOC, or DOCX format)</p>
-                            @error('application_link')
-                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                            @enderror
-                        </div>
-
-                        <!-- Buttons -->
+                        <!-- Submit Button -->
                         <div class="flex justify-end space-x-3">
-                            <a href="{{ route('job-listings.index') }}" 
+                            <a href="{{ route('job-listings.show', $jobListing) }}" 
                                class="inline-flex justify-center px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 border border-transparent rounded-md hover:bg-gray-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-gray-500">
                                 Cancel
                             </a>
                             <button
                                 type="submit"
-                                class="inline-flex justify-center px-4 py-2 text-sm font-medium text-white bg-pink-600 border border-transparent rounded-md hover:bg-pink-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-pink-500"
+                                class="inline-flex justify-center px-4 py-2 text-sm font-medium text-white bg-indigo-600 border border-transparent rounded-md hover:bg-indigo-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-indigo-500"
                             >
                                 Submit Application
                             </button>

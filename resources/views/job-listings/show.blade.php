@@ -61,7 +61,7 @@
                         </div>
                     </div>
 
-                    <!-- Company Details -->
+                    <!-- Company Details 
                     <div class="mb-8">
                         <h2 class="text-xl font-bold text-indigo-900 mb-4">About the Company</h2>
                         <div class="bg-indigo-50 p-6 rounded-lg">
@@ -95,27 +95,21 @@
                                 @endif
                             </div>
                         </div>
-                    </div>
+                    </div> -->
 
                     <!-- Action Buttons -->
                     <div class="flex justify-end gap-4">
                         <a href="{{ route('dashboard') }}" 
+                           title="Return to Dashboard"
                            class="inline-flex items-center px-6 py-3 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors duration-200">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true" role="img">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                             </svg>
-                            Back to Dashboard
+                            <span>Back to Dashboard</span>
                         </a>
-                        <form action="{{ route('job-listings.apply', $jobListing) }}" method="POST">
-                            @csrf
-                            <button type="submit" 
-                                    class="inline-flex items-center px-6 py-3 bg-pink-600 text-white rounded-lg hover:bg-pink-700 transition-colors duration-200">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-                                </svg>
-                                Apply Now
-                            </button>
-                        </form>
+                        @if(auth()->user()->role === 'Jobseeker')
+                        <a href="{{ route('job-listings.apply', $jobListing) }}" class="btn btn-primary"> Apply Now</a>
+                        @endif
                     </div>
                 </div>
             </div>

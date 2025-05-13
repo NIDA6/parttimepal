@@ -74,6 +74,18 @@ class CompanyProfileController extends Controller
                 ]);
             }
 
+            // Handle social media links
+            if (!empty($validated['url'])) {
+                foreach ($validated['url'] as $url) {
+                    if (!empty($url)) {
+                        $profile->socialMedia()->create([
+                            'platform' => 'Social Media',
+                            'url' => $url,
+                        ]);
+                    }
+                }
+            }
+
             DB::commit();
             return redirect()->route('dashboard')->with('success', 'Profile updated successfully!');
         } catch (\Exception $e) {
@@ -151,5 +163,15 @@ class CompanyProfileController extends Controller
             DB::rollBack();
             return back()->withErrors(['error' => 'Failed to update profile. Please try again.']);
         }
+    }
+
+    public function show(CompanyProfile $companyProfile): View
+    {
+        // Load the relationships without the status filter
+        $companyProfile->load(['socialMedia', 'jobListings' => function($query) {
+            $query->orderBy('created_at', 'desc');
+        }]);
+
+        return view('profile.company.show', compact('companyProfile'));
     }
 } 
