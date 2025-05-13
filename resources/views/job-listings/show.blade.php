@@ -56,12 +56,8 @@
                     <!-- Requirements -->
                     <div class="mb-8">
                         <h2 class="text-xl font-bold text-indigo-900 mb-4">Requirements</h2>
-                        <div class="flex flex-wrap gap-2">
-                            @foreach(explode(',', $jobListing->requirements) as $requirement)
-                                <span class="px-4 py-2 bg-indigo-100 text-indigo-800 rounded-full text-sm">
-                                    {{ trim($requirement) }}
-                                </span>
-                            @endforeach
+                        <div class="prose max-w-none">
+                            <p class="text-gray-700">{{ $jobListing->requirements }}</p>
                         </div>
                     </div>
 

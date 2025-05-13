@@ -10,7 +10,6 @@ class JobListing extends Model
     use HasFactory;
 
     protected $fillable = [
-        'company_profile_id',
         'title',
         'description',
         'requirements',
@@ -18,7 +17,7 @@ class JobListing extends Model
         'salary',
         'job_time',
         'additional_message',
-        'application_link',
+        'company_profile_id',
     ];
 
     public function companyProfile()

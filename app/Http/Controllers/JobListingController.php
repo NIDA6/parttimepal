@@ -25,28 +25,54 @@ class JobListingController extends Controller
 
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'title' => 'required|string|max:255',
-            'description' => 'required|string',
-            'requirements' => 'required|string',
-            'responsibilities' => 'required|string',
-            'salary' => 'required|string|max:255',
-            'job_time' => 'required|string|max:255',
-            'additional_message' => 'nullable|string',
+        try {
+            $user = Auth::user();
             
-        ]);
+            if (!$user->companyProfile) {
+                return redirect()->route('company.profile.create')
+                    ->with('error', 'Please create your company profile first.');
+            }
 
-        $validated['company_profile_id'] = Auth::user()->companyProfile->id;
+            $validated = $request->validate([
+                'title' => 'required|string|max:255',
+                'description' => 'required|string',
+                'requirements' => 'required|string',
+                'responsibilities' => 'required|string',
+                'salary' => 'required|numeric|min:0',
+                'job_time' => 'required|string|max:255',
+                'additional_message' => 'nullable|string',
+            ]);
 
-        JobListing::create($validated);
+            $validated['company_profile_id'] = $user->companyProfile->id;
 
-        return redirect()->route('dashboard')->with('success', 'Job posted successfully!');
+            $jobListing = JobListing::create($validated);
+
+            return redirect()->route('job-listings.show', $jobListing)
+                ->with('success', 'Job posted successfully!');
+        } catch (\Exception $e) {
+            \Log::error('Error creating job listing: ' . $e->getMessage());
+            return redirect()->back()
+                ->withInput()
+                ->with('error', 'There was an error creating the job listing. Please try again.');
+        }
     }
 
     public function show(JobListing $jobListing)
     {
-        $jobListing->load('companyProfile');
-        return view('job-listings.show', compact('jobListing'));
+        try {
+            $jobListing->load('companyProfile');
+            
+            if (!$jobListing->companyProfile) {
+                return redirect()->route('dashboard')
+                    ->with('error', 'This job listing is no longer available.');
+            }
+
+            return view('job-listings.show', compact('jobListing'));
+        } catch (\Exception $e) {
+            \Log::error('Error showing job listing: ' . $e->getMessage());
+            return redirect()->route('dashboard')
+                ->with('error', 'There was an error loading the job listing.');
+        }
     }
 
     public function edit(JobListing $jobListing)

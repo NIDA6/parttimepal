@@ -34,7 +34,7 @@
                     </h3>
                     
                     <div class="grid grid-cols-1 gap-6">
-                        @forelse($jobListings ?? [] as $job)
+                        @forelse($jobListings as $job)
                             <div class="bg-gradient-to-br from-indigo-50/80 via-purple-50/80 to-pink-50/80 p-6 rounded-xl border border-indigo-200/50 shadow-lg backdrop-blur-sm transition-all duration-300 hover:shadow-xl">
                                 <!-- Company Name Banner -->
                                 <div class="mb-4 pb-3 border-b border-indigo-200/50">
@@ -55,7 +55,7 @@
                                         </p>
                                     </div>
                                     <div class="text-right">
-                                        <p class="text-lg font-semibold text-pink-600">${{ number_format($job->salary, 2) }}</p>
+                                        <p class="text-lg font-semibold text-pink-600">${{ number_format((float)$job->salary, 2) }}</p>
                                         <p class="text-sm text-gray-600">{{ $job->job_time }}</p>
                                     </div>
                                 </div>

@@ -24,11 +24,12 @@ class CompanyProfileController extends Controller
     {
         $validated = $request->validate([
             'company_name' => ['required', 'string', 'max:255'],
-            'company_description' => ['required', 'string'],
-            'company_website' => ['nullable', 'url', 'max:255'],
-            'company_location' => ['required', 'string', 'max:255'],
-            'company_industry' => ['required', 'string', 'max:255'],
-            'company_size' => ['required', 'string', 'max:255'],
+            'description' => ['required', 'string'],
+            'website_url' => ['nullable', 'url', 'max:255'],
+            'location' => ['required', 'string', 'max:255'],
+            'company_email' => ['required', 'email', 'max:255'],
+            'phone_number' => ['required', 'string', 'max:20'],
+            'establish_date' => ['required', 'date'],
         ]);
 
         try {
@@ -41,11 +42,11 @@ class CompanyProfileController extends Controller
                 // Update 
                 $profile->update([
                     'company_name' => $validated['company_name'],
-                    'company_description' => $validated['company_description'],
-                    'company_website' => $validated['company_website'],
-                    'company_location' => $validated['company_location'],
-                    'company_industry' => $validated['company_industry'],
-                    'company_size' => $validated['company_size'],
+                    'description' => $validated['description'],
+                    'website_url' => $validated['website_url'],
+                    'location' => $validated['location'],
+                    'phone_number' => $validated['phone_number'],
+                    'establish_date' => $validated['establish_date'],
                 ]);
 
                 Log::info('Profile updated', [
@@ -58,11 +59,11 @@ class CompanyProfileController extends Controller
                 $profile = CompanyProfile::create([
                     'user_id' => $user->id,
                     'company_name' => $validated['company_name'],
-                    'company_description' => $validated['company_description'],
-                    'company_website' => $validated['company_website'],
-                    'company_location' => $validated['company_location'],
-                    'company_industry' => $validated['company_industry'],
-                    'company_size' => $validated['company_size'],
+                    'description' => $validated['description'],
+                    'website_url' => $validated['website_url'],
+                    'location' => $validated['location'],
+                    'phone_number' => $validated['phone_number'],
+                    'establish_date' => $validated['establish_date'],
                     'company_email' => $user->email,
                 ]);
 
@@ -77,7 +78,12 @@ class CompanyProfileController extends Controller
             return redirect()->route('dashboard')->with('success', 'Profile updated successfully!');
         } catch (\Exception $e) {
             DB::rollBack();
-            return back()->withErrors(['error' => 'Failed to update profile. Please try again.']);
+            Log::error('Company profile creation/update failed', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+                'user_id' => Auth::id()
+            ]);
+            return back()->withErrors(['error' => 'Failed to update profile: ' . $e->getMessage()]);
         }
     }
 
@@ -104,7 +110,6 @@ class CompanyProfileController extends Controller
             'phone' => ['required', 'string', 'max:20'],
             'address' => ['required', 'string', 'max:255'],
             'description' => ['required', 'string'],
-            'requirements' => ['required', 'string'],
             'website' => ['nullable', 'url', 'max:255'],
             'establish_date' => ['required', 'date'],
             'url' => ['nullable', 'array'],
@@ -121,7 +126,6 @@ class CompanyProfileController extends Controller
                 'phone_number' => $validated['phone'],
                 'location' => $validated['address'],
                 'description' => $validated['description'],
-                'requirements' => $validated['requirements'],
                 'website_url' => $validated['website'],
                 'establish_date' => $validated['establish_date'],
             ]);
@@ -143,8 +147,7 @@ class CompanyProfileController extends Controller
 
             DB::commit();
             return redirect()->route('dashboard')->with('success', 'Profile updated successfully!');
-        } 
-        catch (\Exception $e) {
+        } catch (\Exception $e) {
             DB::rollBack();
             return back()->withErrors(['error' => 'Failed to update profile. Please try again.']);
         }

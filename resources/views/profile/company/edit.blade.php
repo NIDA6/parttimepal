@@ -45,13 +45,6 @@
                             <x-input-error :messages="$errors->get('description')" class="mt-2" />
                         </div>
 
-                        <!-- Requirements -->
-                        <div class="mt-4">
-                            <x-input-label for="requirements" :value="__('Company Requirements')" class="text-gray-700" />
-                            <textarea id="requirements" name="requirements" class="block mt-1 w-full border-pink-100 bg-white focus:border-pink-200 focus:ring focus:ring-pink-100 focus:ring-opacity-50 rounded-md shadow-sm" rows="4" required>{{ old('requirements', $profile->requirements) }}</textarea>
-                            <x-input-error :messages="$errors->get('requirements')" class="mt-2" />
-                        </div>
-
                         <!-- Website -->
                         <div class="mt-4">
                             <x-input-label for="website" :value="__('Website (Optional)')" class="text-gray-700" />
