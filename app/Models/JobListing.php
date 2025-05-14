@@ -20,6 +20,7 @@ class JobListing extends Model
         'job_time',
         'additional_message',
         'company_profile_id',
+        'application_link',
     ];
 
     public function companyProfile()

@@ -4,7 +4,7 @@
             <h2 class="font-bold text-3xl text-pink-600 tracking-tight">
                 {{ __('Post New Job') }}
             </h2>
-            <p class="text-sm text-pink-600 font-medium">Create your job listing in minutes</p>
+            
         </div>
     </x-slot>
 
@@ -38,16 +38,10 @@
 
                                 <!-- Salary -->
                                 <div>
-                                    <x-input-label for="salary" :value="__('Annual Salary')" class="text-base font-semibold text-pink-600" />
-                                    <div class="mt-2 relative rounded-xl shadow-sm">
-                                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                                            <span class="text-pink-600 sm:text-sm font-medium">$</span>
-                                        </div>
-                                        <x-text-input id="salary" name="salary" type="number" step="0.01" 
-                                            class="pl-8 block w-full rounded-xl border-indigo-200/50 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-base bg-white/50 backdrop-blur-sm transition-all duration-200 hover:border-indigo-300 focus:shadow-md" 
-                                            :value="old('salary')" required 
-                                            placeholder="e.g., 75000" />
-                                    </div>
+                                    <x-input-label for="salary" :value="__('Salary')" class="text-base font-semibold text-pink-600" />
+                                    <x-text-input id="salary" name="salary" type="text" 
+                                        class="mt-2 block w-full rounded-xl border-indigo-200/50 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-base bg-white/50 backdrop-blur-sm transition-all duration-200 hover:border-indigo-300 focus:shadow-md" 
+                                        :value="old('salary')" required />
                                     <x-input-error class="mt-2" :messages="$errors->get('salary')" />
                                 </div>
 

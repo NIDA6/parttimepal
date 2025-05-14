@@ -42,9 +42,15 @@
 
                         <!-- Salary -->
                         <div>
-                            <x-input-label for="salary" :value="__('Salary')" />
-                            <x-text-input id="salary" name="salary" type="text" class="mt-1 block w-full" 
-                                :value="old('salary', $jobListing->salary)" required />
+                            <x-input-label for="salary" :value="__('Salary')" class="text-base font-semibold text-pink-600" />
+                            <div class="mt-2 relative rounded-xl shadow-sm">
+                                <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                    <span class="text-pink-600 sm:text-sm font-medium">$</span>
+                                </div>
+                                <x-text-input id="salary" name="salary" type="text" 
+                                    class="pl-8 block w-full rounded-xl border-indigo-200/50 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-base bg-white/50 backdrop-blur-sm transition-all duration-200 hover:border-indigo-300 focus:shadow-md" 
+                                    :value="old('salary', $jobListing->salary)" required />
+                            </div>
                             <x-input-error class="mt-2" :messages="$errors->get('salary')" />
                         </div>
 
@@ -75,13 +81,7 @@
                             <x-input-error class="mt-2" :messages="$errors->get('additional_message')" />
                         </div>
 
-                        <!-- Application Link -->
-                        <div>
-                            <x-input-label for="application_link" :value="__('Application Link')" />
-                            <x-text-input id="application_link" name="application_link" type="url" class="mt-1 block w-full" 
-                                :value="old('application_link', $jobListing->application_link)" required />
-                            <x-input-error class="mt-2" :messages="$errors->get('application_link')" />
-                        </div>
+                        
 
                         <div class="flex items-center gap-4">
                             <x-primary-button>{{ __('Update Job Listing') }}</x-primary-button>

@@ -18,10 +18,10 @@ return new class extends Migration
             $table->text('description');
             $table->text('requirements');
             $table->text('responsibilities');
-            $table->decimal('salary', 10, 2);
-            $table->string('job_time');
+            $table->string('salary');
+            $table->string('job_time')->nullable();
             $table->text('additional_message')->nullable();
-            $table->string('application_link');
+            $table->string('application_link')->nullable();
             $table->timestamps();
         });
     }

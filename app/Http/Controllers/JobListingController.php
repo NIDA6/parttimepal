@@ -39,19 +39,26 @@ class JobListingController extends Controller
                 'description' => 'required|string',
                 'requirements' => 'required|string',
                 'responsibilities' => 'required|string',
-                'salary' => 'required|numeric|min:0',
+                'salary' => 'required|string|max:255',
                 'job_time' => 'required|string|max:255',
                 'additional_message' => 'nullable|string',
+                'application_link' => 'nullable|string|max:255',
             ]);
 
             $validated['company_profile_id'] = $user->companyProfile->id;
 
-            $jobListing = JobListing::create($validated);
-
-            return redirect()->route('job-listings.show', $jobListing)
-                ->with('success', 'Job posted successfully!');
+            try {
+                $jobListing = JobListing::create($validated);
+                return redirect()->route('job-listings.show', $jobListing)
+                    ->with('success', 'Job posted successfully!');
+            } catch (\Exception $e) {
+                \Log::error('Error creating job listing: ' . $e->getMessage());
+                return redirect()->back()
+                    ->withInput()
+                    ->with('error', 'There was an error creating the job listing. Please try again.');
+            }
         } catch (\Exception $e) {
-            \Log::error('Error creating job listing: ' . $e->getMessage());
+            \Log::error('Error in job listing creation: ' . $e->getMessage());
             return redirect()->back()
                 ->withInput()
                 ->with('error', 'There was an error creating the job listing. Please try again.');
@@ -98,16 +105,21 @@ class JobListingController extends Controller
             'description' => 'required|string',
             'requirements' => 'required|string',
             'responsibilities' => 'required|string',
-            'salary' => 'required|numeric',
-            'job_time' => 'required|string',
+            'salary' => 'required|string|max:255',
+            'job_time' => 'required|string|max:255',
             'additional_message' => 'nullable|string',
-            'application_link' => 'required|url',
         ]);
 
-        $jobListing->update($validated);
-
-        return redirect()->route('job-listings.show', $jobListing)
-            ->with('success', 'Job listing updated successfully.');
+        try {
+            $jobListing->update($validated);
+            return redirect()->route('job-listings.show', $jobListing)
+                ->with('success', 'Job listing updated successfully.');
+        } catch (\Exception $e) {
+            \Log::error('Error updating job listing: ' . $e->getMessage());
+            return redirect()->back()
+                ->withInput()
+                ->with('error', 'There was an error updating the job listing. Please try again.');
+        }
     }
 
     public function apply(Request $request, JobListing $jobListing)

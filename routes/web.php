@@ -5,6 +5,7 @@ use App\Http\Controllers\JobListingController;
 use App\Http\Controllers\ApplicationController;
 use App\Http\Controllers\Profile\CompanyProfileController;
 use App\Http\Controllers\Profile\JobseekerProfileController;
+use App\Http\Controllers\BrowseController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -32,10 +33,14 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/company/profile', [CompanyProfileController::class, 'store'])->name('company.profile.store');
     Route::get('/company/profile/edit', [CompanyProfileController::class, 'edit'])->name('company.profile.edit');
     Route::put('/company/profile', [CompanyProfileController::class, 'update'])->name('company.profile.update');
+    Route::get('/company/profile/{companyProfile}', [CompanyProfileController::class, 'show'])->name('company-profiles.show');
+    Route::get('/jobseeker/profile/{jobseekerProfile}', [JobseekerProfileController::class, 'show'])->name('jobseeker-profiles.show');
 });
 
 // Company-specific Job Listings Routes - These must come BEFORE the general job listings routes
 Route::middleware(['auth', \App\Http\Middleware\CompanyProfileMiddleware::class])->group(function () {
+    Route::get('/job-posts/create', [App\Http\Controllers\JobPostController::class, 'create'])->name('job-posts.create');
+    Route::post('/job-posts', [App\Http\Controllers\JobPostController::class, 'store'])->name('job-posts.store');
     Route::get('/job-listings/create', [JobListingController::class, 'create'])->name('job-listings.create');
     Route::post('/job-listings', [JobListingController::class, 'store'])->name('job-listings.store');
     Route::get('/job-listings/{jobListing}/edit', [JobListingController::class, 'edit'])->name('job-listings.edit');
@@ -56,6 +61,9 @@ Route::middleware(['auth', 'company.profile'])->group(function () {
     Route::get('/applications/{application}', [ApplicationController::class, 'show'])->name('applications.show');
     Route::put('/applications/{application}/status', [ApplicationController::class, 'updateStatus'])->name('applications.update-status');
 });
+
+// Browse routes
+Route::get('/browse', [BrowseController::class, 'index'])->name('browse.index');
 
 Route::middleware(['auth', 'verified'])->group(function () {
     // Company Dashboard Routes
@@ -92,6 +100,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ];
         return view('reviews.index', ['reviews' => $dummyReviews]);
     })->name('reviews.index');
+
+    // Browse detail routes
+    Route::get('/browse/company/{id}', [BrowseController::class, 'showCompany'])->name('browse.company');
+    Route::get('/browse/jobseeker/{id}', [BrowseController::class, 'showJobseeker'])->name('browse.jobseeker');
 });
 
 require __DIR__.'/auth.php';
