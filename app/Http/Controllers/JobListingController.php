@@ -6,7 +6,9 @@ use App\Models\JobListing;
 use App\Models\JobApplication;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Log;
+use App\Notifications\NewJobApplication;
+use Illuminate\Support\Facades\Notification;
 
 class JobListingController extends Controller
 {
@@ -21,48 +23,42 @@ class JobListingController extends Controller
 
     public function create()
     {
+        Log::info('JobListingController@create method called');
+        Log::info('User:', ['user' => auth()->user()]);
+        
+        if (!auth()->user()) {
+            Log::error('No authenticated user found');
+            return redirect()->route('login');
+        }
+
+        if (!auth()->user()->companyProfile) {
+            Log::error('No company profile found for user');
+            return redirect()->route('company.profile.create')
+                ->with('error', 'You need to create a company profile first.');
+        }
+
         return view('job-listings.create');
     }
 
     public function store(Request $request)
     {
-        try {
-            $user = Auth::user();
-            
-            if (!$user->companyProfile) {
-                return redirect()->route('company.profile.create')
-                    ->with('error', 'Please create your company profile first.');
-            }
+        $validated = $request->validate([
+            'title' => 'required|string|max:255',
+            'description' => 'required|string',
+            'requirements' => 'required|string',
+            'responsibilities' => 'required|string',
+            'salary' => 'required|numeric|between:0,99999999.99',
+            'job_time' => 'required|string|max:255',
+            'additional_message' => 'nullable|string',
+            'application_link' => 'required|url|max:255',
+        ]);
 
-            $validated = $request->validate([
-                'title' => 'required|string|max:255',
-                'description' => 'required|string',
-                'requirements' => 'required|string',
-                'responsibilities' => 'required|string',
-                'salary' => 'required|string|max:255',
-                'job_time' => 'required|string|max:255',
-                'additional_message' => 'nullable|string',
-                'application_link' => 'nullable|string|max:255',
-            ]);
+        $validated['company_profile_id'] = Auth::user()->companyProfile->id;
 
-            $validated['company_profile_id'] = $user->companyProfile->id;
+        JobListing::create($validated);
 
-            try {
-                $jobListing = JobListing::create($validated);
-                return redirect()->route('job-listings.show', $jobListing)
-                    ->with('success', 'Job posted successfully!');
-            } catch (\Exception $e) {
-                \Log::error('Error creating job listing: ' . $e->getMessage());
-                return redirect()->back()
-                    ->withInput()
-                    ->with('error', 'There was an error creating the job listing. Please try again.');
-            }
-        } catch (\Exception $e) {
-            \Log::error('Error in job listing creation: ' . $e->getMessage());
-            return redirect()->back()
-                ->withInput()
-                ->with('error', 'There was an error creating the job listing. Please try again.');
-        }
+        return redirect()->route('dashboard')
+            ->with('success', 'Job posted successfully! You can view it in your job listings below.');
     }
 
     public function show(JobListing $jobListing)
@@ -105,7 +101,7 @@ class JobListingController extends Controller
             'description' => 'required|string',
             'requirements' => 'required|string',
             'responsibilities' => 'required|string',
-            'salary' => 'required|string|max:255',
+            'salary' => 'required|numeric|between:0,99999999.99',
             'job_time' => 'required|string|max:255',
             'additional_message' => 'nullable|string',
         ]);
@@ -124,19 +120,17 @@ class JobListingController extends Controller
 
     public function apply(Request $request, JobListing $jobListing)
     {
+        // Add debugging
         \Log::info('Apply method called', [
-            'user_id' => auth()->id(),
-            'user_role' => auth()->user()->role,
-            'job_listing_id' => $jobListing->id,
-            'request_method' => $request->method()
+            'method' => $request->method(),
+            'isPost' => $request->isMethod('post'),
+            'user' => auth()->user()->id,
+            'role' => auth()->user()->role
         ]);
 
         // Check if user is a jobseeker
-        if (auth()->user()->role !== 'Jobseeker') {
-            \Log::warning('Non-jobseeker tried to apply', [
-                'user_id' => auth()->id(),
-                'user_role' => auth()->user()->role
-            ]);
+        if (strtolower(auth()->user()->role) !== 'jobseeker') {
+            \Log::error('User is not a jobseeker', ['user' => auth()->user()]);
             return redirect()->route('dashboard')->with('error', 'Only jobseekers can apply for jobs.');
         }
 
@@ -147,28 +141,66 @@ class JobListingController extends Controller
         }
 
         // For POST requests, handle the form submission
-        $validated = $request->validate([
-            'phone' => 'required|string|max:20',
-            'cover_letter' => 'required|string|min:50',
-            'resume' => 'required|file|mimes:pdf,doc,docx|max:10240', // Max 10MB
-            'additional_notes' => 'nullable|string',
-        ]);
+        try {
+            \Log::info('Processing POST request', ['request_data' => $request->all()]);
 
-        // Store the resume file
-        $resumePath = $request->file('resume')->store('resumes', 'public');
+            $validated = $request->validate([
+                'full_name' => 'required|string|max:255',
+                'cover_letter' => 'required|string|min:50',
+                'experience' => 'nullable|string',
+                'additional_notes' => 'nullable|string',
+                'application_link' => 'required|file|mimes:pdf,doc,docx|max:10240', // Max 10MB
+            ]);
 
-        // Create the job application
-        JobApplication::create([
-            'job_listing_id' => $jobListing->id,
-            'user_id' => auth()->id(),
-            'phone' => $validated['phone'],
-            'cover_letter' => $validated['cover_letter'],
-            'resume_path' => $resumePath,
-            'additional_notes' => $validated['additional_notes'],
-            'status' => 'pending',
-        ]);
+            \Log::info('Validation passed', ['validated_data' => $validated]);
 
-        return redirect()->route('job-listings.show', $jobListing)
-            ->with('success', 'Your application has been submitted successfully!');
+            // Handle file upload
+            if ($request->hasFile('application_link')) {
+                $file = $request->file('application_link');
+                $fileName = time() . '_' . $file->getClientOriginalName();
+                $filePath = $file->storeAs('resumes', $fileName, 'public');
+                
+                if (!$filePath) {
+                    throw new \Exception('Failed to upload file');
+                }
+                \Log::info('File uploaded successfully', ['file_path' => $filePath]);
+            } else {
+                throw new \Exception('No file uploaded');
+            }
+
+            // Create the application
+            $application = Application::create([
+                'job_listing_id' => $jobListing->id,
+                'user_id' => auth()->id(),
+                'Full Name' => $validated['full_name'],
+                'cover_letter' => $validated['cover_letter'],
+                'experience' => $validated['experience'] ?? null,
+                'additional_notes' => $validated['additional_notes'] ?? null,
+                'application_link' => $filePath
+            ]);
+
+            if (!$application) {
+                throw new \Exception('Failed to create application');
+            }
+
+            \Log::info('Application created successfully', ['application_id' => $application->id]);
+
+            // Send notification to the company
+            $companyUser = $jobListing->companyProfile->user;
+            $companyUser->notify(new NewJobApplication($application));
+
+            \Log::info('Notification sent to company', ['company_user_id' => $companyUser->id]);
+
+            return redirect()->route('dashboard')
+                ->with('success', 'Your application has been submitted successfully!');
+        } catch (\Exception $e) {
+            \Log::error('Application submission error: ' . $e->getMessage(), [
+                'exception' => $e,
+                'request_data' => $request->all()
+            ]);
+            return redirect()->back()
+                ->withInput()
+                ->with('error', 'There was an error submitting your application: ' . $e->getMessage());
+        }
     }
 }

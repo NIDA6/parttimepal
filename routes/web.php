@@ -5,7 +5,10 @@ use App\Http\Controllers\JobListingController;
 use App\Http\Controllers\ApplicationController;
 use App\Http\Controllers\Profile\CompanyProfileController;
 use App\Http\Controllers\Profile\JobseekerProfileController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\BrowseController;
+use App\Http\Controllers\ReviewController;
+
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -37,22 +40,26 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/jobseeker/profile/{jobseekerProfile}', [JobseekerProfileController::class, 'show'])->name('jobseeker-profiles.show');
 });
 
-// Company-specific Job Listings Routes - These must come BEFORE the general job listings routes
-Route::middleware(['auth', \App\Http\Middleware\CompanyProfileMiddleware::class])->group(function () {
-    Route::get('/job-posts/create', [App\Http\Controllers\JobPostController::class, 'create'])->name('job-posts.create');
-    Route::post('/job-posts', [App\Http\Controllers\JobPostController::class, 'store'])->name('job-posts.store');
-    Route::get('/job-listings/create', [JobListingController::class, 'create'])->name('job-listings.create');
-    Route::post('/job-listings', [JobListingController::class, 'store'])->name('job-listings.store');
-    Route::get('/job-listings/{jobListing}/edit', [JobListingController::class, 'edit'])->name('job-listings.edit');
-    Route::put('/job-listings/{jobListing}', [JobListingController::class, 'update'])->name('job-listings.update');
-});
-
 // General Job Listings Routes
 Route::middleware(['auth'])->group(function () {
     Route::get('/job-listings', [JobListingController::class, 'index'])->name('job-listings.index');
     Route::get('/job-listings/{jobListing}', [JobListingController::class, 'show'])->name('job-listings.show');
-    Route::get('/job-listings/{jobListing}/apply', [JobListingController::class, 'apply'])->name('job-listings.apply');
-    Route::post('/job-listings/{jobListing}/apply', [JobListingController::class, 'apply'])->name('job-listings.apply');
+});
+
+// Job Application Routes - Separate from company routes
+Route::middleware(['auth'])->group(function () {
+    Route::get('/job-listings/{jobListing}/apply', [JobListingController::class, 'apply'])->name('job-listings.apply.form');
+    Route::post('/job-listings/{jobListing}/apply', [JobListingController::class, 'apply'])->name('job-listings.apply.submit');
+});
+
+// Company-specific Job Listings Routes
+Route::middleware(['auth', 'company.profile'])->group(function () {
+    Route::get('/job-listings/create', [JobListingController::class, 'create'])->name('job-listings.create');
+    Route::post('/job-listings', [JobListingController::class, 'store'])->name('job-listings.store');
+    Route::get('/job-listings/{jobListing}/edit', [JobListingController::class, 'edit'])->name('job-listings.edit');
+    Route::put('/job-listings/{jobListing}', [JobListingController::class, 'update'])->name('job-listings.update');
+    Route::delete('/job-listings/{jobListing}', [JobListingController::class, 'destroy'])->name('job-listings.destroy');
+    Route::get('/job-listings/{jobListing}/applications', [JobListingController::class, 'applications'])->name('job-listings.applications');
 });
 
 // Applications Routes
@@ -71,16 +78,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
         return view('dashboard.companydashboard');
     })->name('company.dashboard');
 
-    // Applications Routes
-    Route::get('/applications', function () {
-        $dummyApplications = [
-            ['id' => 1, 'job_title' => 'Web Developer', 'applicant' => 'John Doe', 'status' => 'Pending', 'applied_at' => '2024-03-15'],
-            ['id' => 2, 'job_title' => 'UI Designer', 'applicant' => 'Jane Smith', 'status' => 'Reviewed', 'applied_at' => '2024-03-14'],
-            ['id' => 3, 'job_title' => 'Marketing Intern', 'applicant' => 'Mike Johnson', 'status' => 'Pending', 'applied_at' => '2024-03-13'],
-        ];
-        return view('applications.index', ['applications' => $dummyApplications]);
-    })->name('applications.index');
-
     // Notifications Routes
     Route::get('/notifications', function () {
         $dummyNotifications = [
@@ -92,14 +89,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     })->name('notifications.index');
 
     // Reviews Routes
-    Route::get('/reviews', function () {
-        $dummyReviews = [
-            ['id' => 1, 'reviewer' => 'Alice Brown', 'rating' => 5, 'comment' => 'Great company to work with!', 'created_at' => '2024-03-15'],
-            ['id' => 2, 'reviewer' => 'Bob Wilson', 'rating' => 4, 'comment' => 'Good experience overall', 'created_at' => '2024-03-14'],
-            ['id' => 3, 'reviewer' => 'Carol Davis', 'rating' => 5, 'comment' => 'Excellent work environment', 'created_at' => '2024-03-13'],
-        ];
-        return view('reviews.index', ['reviews' => $dummyReviews]);
-    })->name('reviews.index');
+    Route::get('/reviews', [ReviewController::class, 'index'])->name('reviews.index');
 
     // Browse detail routes
     Route::get('/browse/company/{id}', [BrowseController::class, 'showCompany'])->name('browse.company');
@@ -117,6 +107,21 @@ Route::middleware(['auth', \App\Http\Middleware\AdminMiddleware::class])->group(
     Route::get('/admin/companies/{user}', [App\Http\Controllers\Admin\UserController::class, 'showCompany'])->name('admin.companies.show');
     Route::delete('/admin/companies/{user}', [App\Http\Controllers\Admin\UserController::class, 'destroyCompany'])->name('admin.companies.destroy');
     Route::get('/admin/admins', [App\Http\Controllers\Admin\UserController::class, 'admins'])->name('admin.admins');
+});
+
+// Notification routes
+Route::middleware(['auth'])->group(function () {
+    Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
+    Route::post('/notifications/{id}/mark-as-read', [NotificationController::class, 'markAsRead'])->name('notifications.markAsRead');
+    Route::post('/notifications/mark-all-as-read', [NotificationController::class, 'markAllAsRead'])->name('notifications.markAllAsRead');
+});
+
+// Review routes
+Route::middleware(['auth'])->group(function () {
+    Route::post('/company-profile/{companyProfile}/reviews', [ReviewController::class, 'store'])->name('reviews.store');
+    Route::get('/reviews/{review}/edit', [ReviewController::class, 'edit'])->name('reviews.edit');
+    Route::put('/reviews/{review}', [ReviewController::class, 'update'])->name('reviews.update');
+    Route::delete('/reviews/{review}', [ReviewController::class, 'destroy'])->name('reviews.destroy');
 });
 
 require __DIR__.'/auth.php';

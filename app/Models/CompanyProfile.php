@@ -35,6 +35,11 @@ class CompanyProfile extends Model
         return $this->hasMany(JobListing::class);
     }
 
+    public function reviews(): HasMany
+    {
+        return $this->hasMany(Review::class);
+    }
+
     public function socialMedia(): HasMany
     {
         return $this->hasMany(CompanySocialMedia::class);

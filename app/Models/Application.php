@@ -12,13 +12,11 @@ class Application extends Model
     protected $fillable = [
         'job_listing_id',
         'user_id',
-        'name',
-        
+        'Full Name',
         'cover_letter',
         'experience',
         'additional_notes',
-        'application_link',
-        
+        'application_link'
     ];
 
     public function jobListing()

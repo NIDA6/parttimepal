@@ -24,6 +24,13 @@ class CompanyProfileController extends Controller
     {
         $validated = $request->validate([
             'company_name' => ['required', 'string', 'max:255'],
+            'phone' => ['required', 'string', 'max:20'],
+            'address' => ['required', 'string', 'max:255'],
+            'description' => ['required', 'string'],
+            'website' => ['nullable', 'url', 'max:255'],
+            'establish_date' => ['required', 'date'],
+            'url' => ['nullable', 'array'],
+            'url.*' => ['nullable', 'url', 'max:255'],
             'description' => ['required', 'string'],
             'website_url' => ['nullable', 'url', 'max:255'],
             'location' => ['required', 'string', 'max:255'],

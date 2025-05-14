@@ -9,13 +9,12 @@ class ApplicationController extends Controller
 {
     public function index()
     {
-        $applications = auth()->user()->companyProfile->jobListings()
-            ->with(['applications' => function ($query) {
-                $query->with('user.jobseekerProfile');
-            }])
-            ->get()
-            ->pluck('applications')
-            ->flatten();
+        $applications = Application::whereHas('jobListing', function ($query) {
+            $query->where('company_profile_id', auth()->user()->companyProfile->id);
+        })
+        ->with(['jobListing', 'user'])
+        ->latest()
+        ->get();
 
         return view('applications.index', compact('applications'));
     }

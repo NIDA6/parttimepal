@@ -42,6 +42,15 @@
 
                         <!-- Salary -->
                         <div>
+                            <x-input-label for="salary" :value="__('Salary')" />
+                            <div class="mt-1 relative rounded-md shadow-sm">
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <span class="text-gray-500 sm:text-sm">$</span>
+                                </div>
+                                <x-text-input id="salary" name="salary" type="number" step="0.01" min="0" max="99999999.99"
+                                    class="pl-7 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" 
+                                    :value="old('salary', $jobListing->salary)" required />
+                            </div>
                             <x-input-label for="salary" :value="__('Salary')" class="text-base font-semibold text-pink-600" />
                             <div class="mt-2 relative rounded-xl shadow-sm">
                                 <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">

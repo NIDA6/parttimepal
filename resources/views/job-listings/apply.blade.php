@@ -18,13 +18,24 @@
                         <p class="text-sm text-gray-600">{{ $jobListing->companyProfile->location ?? 'N/A' }}</p>
                     </div>
 
-                    <form action="{{ route('job-listings.apply', $jobListing) }}" method="POST" enctype="multipart/form-data" class="space-y-6">
+                    @if(session('error'))
+                        <div class="mb-4 p-4 text-sm text-red-700 bg-red-100 rounded-lg">
+                            {{ session('error') }}
+                        </div>
+                    @endif
+
+                    <form action="{{ route('job-listings.apply.submit', $jobListing) }}" method="POST" enctype="multipart/form-data" class="space-y-6">
                         @csrf
                         
                         <!-- Phone Number -->
                         <div>
+                            <label for="full_name" class="block text-sm font-medium text-gray-700">Full Name</label>
                             <label for="phone" class="block text-sm font-medium text-gray-700">Phone Number</label>
                             <input
+                                type="text"
+                                id="full_name"
+                                name="full_name"
+                                value="{{ old('full_name') }}"
                                 type="tel"
                                 id="phone"
                                 name="phone"
@@ -33,6 +44,7 @@
                                 placeholder="Enter your phone number"
                                 required
                             >
+                            @error('full_name')
                             @error('phone')
                                 <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                             @enderror
