@@ -7,14 +7,20 @@ use Illuminate\Foundation\Http\Kernel as HttpKernel;
 class Kernel extends HttpKernel
 {
     /**
-     * The application's route middleware.
+     * The application's global HTTP middleware stack.
      *
-     * These middleware may be assigned to groups or used individually.
+     * These middleware are run during every request to your application.
      *
-     * @var array<string, class-string|string>
+     * @var array<int, class-string|string>
      */
     protected $middleware = [
-        //
+        // \App\Http\Middleware\TrustHosts::class,
+        \App\Http\Middleware\TrustProxies::class,
+        \Illuminate\Http\Middleware\HandleCors::class,
+        \App\Http\Middleware\PreventRequestsDuringMaintenance::class,
+        \Illuminate\Foundation\Http\Middleware\ValidatePostSize::class,
+        \App\Http\Middleware\TrimStrings::class,
+        \Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class,
     ];
 
     /**
@@ -39,7 +45,7 @@ class Kernel extends HttpKernel
     ];
 
     /**
-     * The application's route middleware aliases.
+     * The application's middleware aliases.
      *
      * Aliases may be used instead of class names to assign middleware to routes and groups.
      *
@@ -59,6 +65,7 @@ class Kernel extends HttpKernel
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         'company.profile' => \App\Http\Middleware\CompanyProfileMiddleware::class,
         'jobseeker.profile' => \App\Http\Middleware\JobseekerProfileMiddleware::class,
+        'admin' => \App\Http\Middleware\AdminMiddleware::class,
     ];
 
     /**

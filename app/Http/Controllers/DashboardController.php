@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\JobListing;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -13,7 +14,12 @@ class DashboardController extends Controller
         $user = Auth::user();
         
         if ($user->role === 'Admin') {
-            return view('dashboard.admindashboard');
+            $totalJobseekers = User::where('role', 'jobseeker')->count();
+            $totalCompanies = User::where('role', 'company')->count();
+            $totalAdmins = User::where('role', 'admin')->count();
+            $totalUsers = User::count();
+            
+            return view('dashboard.admindashboard', compact('totalJobseekers', 'totalCompanies', 'totalAdmins', 'totalUsers'));
         } elseif ($user->role === 'Company') {
             return view('dashboard.companydashboard');
         } else {

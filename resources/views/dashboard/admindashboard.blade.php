@@ -21,12 +21,12 @@
                                 </button>
                             </div>
                             <div class="relative">
-                                <button class="flex items-center space-x-2 text-gray-700 hover:text-gray-900">
+                                <a href="{{ route('admin.users.create') }}" class="flex items-center space-x-2 text-gray-700 hover:text-gray-900">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
                                     </svg>
-                                    <span>Reports</span>
-                                </button>
+                                    <span>Add New User</span>
+                                </a>
                             </div>
                         </div>
 
@@ -55,18 +55,25 @@
                     <h1 class="text-2xl font-semibold mb-6">Admin Dashboard</h1>
                     
                     <!-- Stats Overview -->
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                        <div class="bg-blue-100 p-6 rounded-lg">
-                            <h3 class="text-lg font-semibold text-blue-800">Total Users</h3>
-                            <p class="text-3xl font-bold text-blue-600">{{ $totalUsers ?? 0 }}</p>
-                        </div>
-                        <div class="bg-green-100 p-6 rounded-lg">
-                            <h3 class="text-lg font-semibold text-green-800">Total Jobs</h3>
-                            <p class="text-3xl font-bold text-green-600">{{ $totalJobs ?? 0 }}</p>
-                        </div>
-                        <div class="bg-purple-100 p-6 rounded-lg">
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                        <a href="{{ route('admin.jobseekers') }}" class="bg-blue-100 p-6 rounded-lg hover:bg-blue-200 transition duration-200 cursor-pointer">
+                            <h3 class="text-lg font-semibold text-blue-800">Total Jobseekers</h3>
+                            <p class="text-3xl font-bold text-blue-600">{{ $totalJobseekers }}</p>
+                        </a>
+                        
+                        <a href="{{ route('admin.companies') }}" class="bg-purple-100 p-6 rounded-lg hover:bg-purple-200 transition duration-200 cursor-pointer">
                             <h3 class="text-lg font-semibold text-purple-800">Total Companies</h3>
-                            <p class="text-3xl font-bold text-purple-600">{{ $totalCompanies ?? 0 }}</p>
+                            <p class="text-3xl font-bold text-purple-600">{{ $totalCompanies }}</p>
+                        </a>
+
+                        <a href="{{ route('admin.admins') }}" class="bg-pink-100 p-6 rounded-lg hover:bg-pink-200 transition duration-200 cursor-pointer">
+                            <h3 class="text-lg font-semibold text-pink-800">Total Admins</h3>
+                            <p class="text-3xl font-bold text-pink-600">{{ $totalAdmins }}</p>
+                        </a>
+
+                        <div class="bg-green-100 p-6 rounded-lg">
+                            <h3 class="text-lg font-semibold text-green-800">Total Users</h3>
+                            <p class="text-3xl font-bold text-green-600">{{ $totalUsers }}</p>
                         </div>
                     </div>
 
