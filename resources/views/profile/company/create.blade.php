@@ -15,16 +15,16 @@
 
         <!-- Phone -->
         <div class="mt-4">
-            <x-input-label for="phone" :value="__('Phone Number')" class="text-gray-700" />
-            <x-text-input id="phone" class="block mt-1 w-full border-pink-100 bg-white focus:border-pink-200 focus:ring focus:ring-pink-100 focus:ring-opacity-50 rounded-md shadow-sm" type="text" name="phone" :value="old('phone')" required />
-            <x-input-error :messages="$errors->get('phone')" class="mt-2" />
+            <x-input-label for="phone_number" :value="__('Phone Number')" class="text-gray-700" />
+            <x-text-input id="phone_number" class="block mt-1 w-full border-pink-100 bg-white focus:border-pink-200 focus:ring focus:ring-pink-100 focus:ring-opacity-50 rounded-md shadow-sm" type="text" name="phone_number" :value="old('phone_number')" required />
+            <x-input-error :messages="$errors->get('phone_number')" class="mt-2" />
         </div>
 
         <!-- Address -->
         <div class="mt-4">
-            <x-input-label for="address" :value="__('Company Address')" class="text-gray-700" />
-            <x-text-input id="address" class="block mt-1 w-full border-pink-100 bg-white focus:border-pink-200 focus:ring focus:ring-pink-100 focus:ring-opacity-50 rounded-md shadow-sm" type="text" name="address" :value="old('address')" required />
-            <x-input-error :messages="$errors->get('address')" class="mt-2" />
+            <x-input-label for="location" :value="__('Company Location')" class="text-gray-700" />
+            <x-text-input id="location" class="block mt-1 w-full border-pink-100 bg-white focus:border-pink-200 focus:ring focus:ring-pink-100 focus:ring-opacity-50 rounded-md shadow-sm" type="text" name="location" :value="old('location')" required />
+            <x-input-error :messages="$errors->get('location')" class="mt-2" />
         </div>
 
         <!-- Description -->
@@ -36,9 +36,9 @@
 
         <!-- Website -->
         <div class="mt-4">
-            <x-input-label for="website" :value="__('Website (Optional)')" class="text-gray-700" />
-            <x-text-input id="website" class="block mt-1 w-full border-pink-100 bg-white focus:border-pink-200 focus:ring focus:ring-pink-100 focus:ring-opacity-50 rounded-md shadow-sm" type="url" name="website" :value="old('website')" />
-            <x-input-error :messages="$errors->get('website')" class="mt-2" />
+            <x-input-label for="website_url" :value="__('Website (Optional)')" class="text-gray-700" />
+            <x-text-input id="website_url" class="block mt-1 w-full border-pink-100 bg-white focus:border-pink-200 focus:ring focus:ring-pink-100 focus:ring-opacity-50 rounded-md shadow-sm" type="url" name="website_url" :value="old('website_url')" />
+            <x-input-error :messages="$errors->get('website_url')" class="mt-2" />
         </div>
 
         <!-- Establish Date -->
@@ -46,6 +46,13 @@
             <x-input-label for="establish_date" :value="__('Establishment Date')" class="text-gray-700" />
             <x-text-input id="establish_date" class="block mt-1 w-full border-pink-100 bg-white focus:border-pink-200 focus:ring focus:ring-pink-100 focus:ring-opacity-50 rounded-md shadow-sm" type="date" name="establish_date" :value="old('establish_date')" required />
             <x-input-error :messages="$errors->get('establish_date')" class="mt-2" />
+        </div>
+
+        <!-- Company Email -->
+        <div class="mt-4">
+            <x-input-label for="company_email" :value="__('Company Email')" class="text-gray-700" />
+            <x-text-input id="company_email" class="block mt-1 w-full border-pink-100 bg-white focus:border-pink-200 focus:ring focus:ring-pink-100 focus:ring-opacity-50 rounded-md shadow-sm" type="email" name="company_email" :value="old('company_email', auth()->user()->email)" required />
+            <x-input-error :messages="$errors->get('company_email')" class="mt-2" />
         </div>
 
         <!-- Social Media Links -->
@@ -76,8 +83,8 @@
         </div>
 
         <div class="flex items-center justify-end mt-4">
-            <x-primary-button class="bg-white hover:bg-pink-50 text-black border-pink-100">
-                {{ __('Complete Profile') }}
+            <x-primary-button class="ms-4 bg-white hover:bg-pink-50 text-black border-pink-100">
+                {{ __('Create Profile') }}
             </x-primary-button>
         </div>
     </form>

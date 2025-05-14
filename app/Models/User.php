@@ -59,4 +59,19 @@ class User extends Authenticatable
     {
         return $this->hasManyThrough(JobListing::class, CompanyProfile::class);
     }
+
+    public function sessions()
+    {
+        return $this->hasMany(UserSession::class);
+    }
+
+    /**
+     * Get the route key for the model.
+     *
+     * @return string
+     */
+    public function getRouteKeyName()
+    {
+        return 'id';
+    }
 }

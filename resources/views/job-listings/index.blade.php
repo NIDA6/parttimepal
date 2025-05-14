@@ -5,6 +5,12 @@
                 <h2 class="font-semibold text-xl text-gray-900 leading-tight">
                     {{ __('Available Jobs') }}
                 </h2>
+                <a href="{{ route('browse.index') }}" class="inline-flex items-center px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors duration-200">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                    Browse 
+                </a>
             </div>
         </div>
     </x-slot>
@@ -22,10 +28,13 @@
                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-pink-600 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                                         </svg>
-                                        <h3 class="text-lg font-semibold text-pink-600">{{ $job->companyProfile->company_name }}</h3>
+                                        <a href="/company/{{ $job->companyProfile->id }}" 
+                                           class="text-lg font-semibold text-pink-600 hover:text-pink-700 hover:underline">
+                                            {{ $job->companyProfile->company_name }}
+                                        </a>
                                     </div>
                                 </div>
-
+                                
                                 <div class="flex justify-between items-start">
                                     <div>
                                         <h4 class="text-xl font-bold text-indigo-900">{{ $job->title }}</h4>
@@ -35,7 +44,7 @@
                                         </p>
                                     </div>
                                     <div class="text-right">
-                                        <p class="text-lg font-semibold text-pink-600">${{ number_format($job->salary, 2) }}</p>
+                                        <p class="text-lg font-semibold text-pink-600">${{ $job->salary }}</p>
                                         <p class="text-sm text-gray-600">{{ $job->job_time }}</p>
                                     </div>
                                 </div>

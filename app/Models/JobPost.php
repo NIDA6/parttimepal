@@ -10,7 +10,7 @@ class JobPost extends Model
     use HasFactory;
 
     protected $fillable = [
-        'company_id',
+        'company_profile_id',
         'title',
         'description',
         'requirements',
@@ -21,8 +21,8 @@ class JobPost extends Model
         'application_link',
     ];
 
-    public function company()
+    public function companyProfile()
     {
-        return $this->belongsTo(Company::class);
+        return $this->belongsTo(CompanyProfile::class);
     }
 }
