@@ -14,20 +14,18 @@ class CompanyProfile extends Model
     protected $fillable = [
         'user_id',
         'company_name',
-        'description',
-        'establish_date',
-        'website_url',
-        'company_email',
+        'email',
+        'phone',
         'location',
-        'phone_number',
-        'requirements',
+        'establish_date',
+        'description'
     ];
 
     protected $casts = [
         'establish_date' => 'date',
     ];
 
-    public function user(): BelongsTo
+    public function user()
     {
         return $this->belongsTo(User::class);
     }

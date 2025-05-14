@@ -104,7 +104,6 @@ class CompanyProfileController extends Controller
             'phone' => ['required', 'string', 'max:20'],
             'address' => ['required', 'string', 'max:255'],
             'description' => ['required', 'string'],
-            'requirements' => ['required', 'string'],
             'website' => ['nullable', 'url', 'max:255'],
             'establish_date' => ['required', 'date'],
             'url' => ['nullable', 'array'],
@@ -121,7 +120,6 @@ class CompanyProfileController extends Controller
                 'phone_number' => $validated['phone'],
                 'location' => $validated['address'],
                 'description' => $validated['description'],
-                'requirements' => $validated['requirements'],
                 'website_url' => $validated['website'],
                 'establish_date' => $validated['establish_date'],
             ]);
