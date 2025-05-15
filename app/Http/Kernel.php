@@ -64,16 +64,18 @@ class Kernel extends HttpKernel
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         'company.profile' => \App\Http\Middleware\CompanyProfileMiddleware::class,
-        'jobseeker.profile' => \App\Http\Middleware\JobseekerProfileMiddleware::class,
-        'admin' => \App\Http\Middleware\AdminMiddleware::class,
     ];
 
     /**
-     * Register any type of middleware.
+     * The application's route middleware.
      *
-     * @var array<class-string|string, class-string|string>
+     * These middleware may be assigned to groups or used individually.
+     *
+     * @var array<string, class-string|string>
      */
     protected $routeMiddleware = [
-        //
+        'company.profile' => \App\Http\Middleware\CompanyProfileMiddleware::class,
+        'jobseeker.profile' => \App\Http\Middleware\JobseekerProfileMiddleware::class,
+        'admin' => \App\Http\Middleware\AdminMiddleware::class,
     ];
 } 

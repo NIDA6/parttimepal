@@ -27,15 +27,27 @@
                     <form action="{{ route('job-listings.apply.submit', $jobListing) }}" method="POST" enctype="multipart/form-data" class="space-y-6">
                         @csrf
                         
-                        <!-- Phone Number -->
+                        <!-- Full Name -->
                         <div>
                             <label for="full_name" class="block text-sm font-medium text-gray-700">Full Name</label>
-                            <label for="phone" class="block text-sm font-medium text-gray-700">Phone Number</label>
                             <input
                                 type="text"
                                 id="full_name"
                                 name="full_name"
                                 value="{{ old('full_name') }}"
+                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                                placeholder="Enter your full name"
+                                required
+                            >
+                            @error('full_name')
+                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        <!-- Phone Number -->
+                        <div>
+                            <label for="phone" class="block text-sm font-medium text-gray-700">Phone Number</label>
+                            <input
                                 type="tel"
                                 id="phone"
                                 name="phone"
@@ -44,7 +56,6 @@
                                 placeholder="Enter your phone number"
                                 required
                             >
-                            @error('full_name')
                             @error('phone')
                                 <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                             @enderror

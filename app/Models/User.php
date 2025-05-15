@@ -50,6 +50,14 @@ class User extends Authenticatable
         return $this->hasOne(JobseekerProfile::class);
     }
 
+    /**
+     * Get the confirmed jobs for the user.
+     */
+    public function confirmedJobs()
+    {
+        return $this->hasMany(ConfirmedJob::class);
+    }
+
     public function companyProfile()
     {
         return $this->hasOne(CompanyProfile::class);

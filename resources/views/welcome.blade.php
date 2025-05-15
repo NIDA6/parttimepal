@@ -8,6 +8,8 @@
 </head>
 <body class="antialiased">
     <!-- Header -->
+    
+
     <header class="bg-pink-100 shadow-sm">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center py-4">
@@ -20,7 +22,7 @@
                 <div class="flex-1 flex justify-end items-center space-x-4">
                     @if (Route::has('login'))
                         @auth
-                        @else
+                    @else
                             <a href="{{ route('login') }}" class="text-black hover:text-pink-600">Log in</a>
                             @if (Route::has('register'))
                                 <a href="{{ route('register') }}" class="text-black hover:text-pink-600">Register</a>

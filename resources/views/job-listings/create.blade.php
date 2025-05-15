@@ -23,54 +23,41 @@
                                 </svg>
                                 Basic Information
                             </h3>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                                <!-- Job Title -->
-                                <div>
-                                    <x-input-label for="title" :value="__('Job Title')" class="text-base font-semibold text-pink-600" />
-                                    <x-text-input id="title" name="title" type="text" 
-                                        class="mt-2 block w-full rounded-xl border-indigo-700/70 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-base bg-white/50 backdrop-blur-sm transition-all duration-200 hover:border-indigo-300 focus:shadow-md" 
-                                        :value="old('title')" required autofocus 
-                                        placeholder="e.g., Senior Software Engineer" />
-                                    <x-input-error class="mt-2" :messages="$errors->get('title')" />
-                                </div>
 
-                                <!-- Job Time -->
-                                <div>
-                                    <x-input-label for="job_time" :value="__('Job Time')" class="text-base font-semibold text-pink-600" />
-                                    <x-text-input id="job_time" name="job_time" type="text" 
-                                        class="mt-2 block w-full rounded-xl border-indigo-700/70 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-base bg-white/50 backdrop-blur-sm transition-all duration-200 hover:border-indigo-300 focus:shadow-md"
-                                        :value="old('job_time')" required/>
-                                    <x-input-error class="mt-2" :messages="$errors->get('job_time')" />
-                                </div>
-
-                                <!-- Salary -->
-                                <div>
-                                    <x-input-label for="salary" :value="__('Annual Salary')" class="text-base font-semibold text-pink-600" />
-                                    <div class="mt-2 relative rounded-xl shadow-sm">
-                                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                                            <span class="text-pink-600 sm:text-sm font-medium">$</span>
-                                        </div>
-                                        <x-text-input id="salary" name="salary" type="number" step="0.01" min="0" max="99999999.99"
-                                            class="pl-8 block w-full rounded-xl border-indigo-200/50 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-base bg-white/50 backdrop-blur-sm transition-all duration-200 hover:border-indigo-300 focus:shadow-md" 
-                                            :value="old('salary')" required 
-                                            placeholder="e.g., 75000.00" />
-                                    </div>
-                                    <x-input-label for="salary" :value="__('Salary')" class="text-base font-semibold text-pink-600" />
-                                    <x-text-input id="salary" name="salary" type="text" 
-                                        class="mt-2 block w-full rounded-xl border-indigo-200/50 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-base bg-white/50 backdrop-blur-sm transition-all duration-200 hover:border-indigo-300 focus:shadow-md" 
-                                        :value="old('salary')" required />
-                                    <x-input-error class="mt-2" :messages="$errors->get('salary')" />
-                                </div>
-
-                                <!-- Application Link -->
-                                <div>
-                                    <x-input-label for="application_link" :value="__('Application Link')" class="text-base font-semibold text-pink-600" />
-                                    <x-text-input id="application_link" name="application_link" type="url" 
-                                        class="mt-2 block w-full rounded-xl border-indigo-700/70 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-base bg-white/50 backdrop-blur-sm transition-all duration-200 hover:border-indigo-300 focus:shadow-md"
-                                        :value="old('application_link')" required placeholder="https://example.com/apply" />
-                                    <x-input-error class="mt-2" :messages="$errors->get('application_link')" />
-                                </div>
+                            <!-- Job Title -->
+                            <div>
+                                <x-input-label for="title" :value="__('Job Title')" class="text-base font-semibold text-pink-600" />
+                                <x-text-input id="title" name="title" type="text" 
+                                    class="mt-2 block w-full rounded-xl border-indigo-700/70 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-base bg-white/50 backdrop-blur-sm transition-all duration-200 hover:border-indigo-300 focus:shadow-md" 
+                                    :value="old('title')" required autofocus 
+                                    placeholder="e.g., Senior Software Engineer" />
+                                <x-input-error class="mt-2" :messages="$errors->get('title')" />
                             </div>
+
+                            <!-- Job Time -->
+                            <div>
+                                <x-input-label for="job_time" :value="__('Job Time')" class="text-base font-semibold text-pink-600" />
+                                <x-text-input id="job_time" name="job_time" type="text" 
+                                    class="mt-2 block w-full rounded-xl border-indigo-700/70 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-base bg-white/50 backdrop-blur-sm transition-all duration-200 hover:border-indigo-300 focus:shadow-md"
+                                    :value="old('job_time')" required/>
+                                <x-input-error class="mt-2" :messages="$errors->get('job_time')" />
+                            </div>
+
+                            <!-- Salary -->
+                            <div>
+                                <x-input-label for="salary" :value="__('Salary')" class="text-base font-semibold text-pink-600" />
+                                <div class="mt-2 relative rounded-xl shadow-sm">
+                                    <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                        <span class="text-pink-600 sm:text-sm font-medium">$</span>
+                                    </div>
+                                    <x-text-input id="salary" name="salary" type="text"
+                                        class="pl-8 block w-full rounded-xl border-indigo-200/50 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-base bg-white/50 backdrop-blur-sm transition-all duration-200 hover:border-indigo-300 focus:shadow-md" 
+                                        :value="old('salary')" required  />
+                                </div>
+                                <x-input-error class="mt-2" :messages="$errors->get('salary')" />
+                            </div>
+
+                        
                         </div>
 
                         <!-- Detailed Information Section -->

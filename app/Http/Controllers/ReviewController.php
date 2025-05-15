@@ -32,15 +32,7 @@ class ReviewController extends Controller
             'comment' => 'required|string|min:10|max:500',
         ]);
 
-        // Check if user has already reviewed this company
-        $existingReview = Review::where('jobseeker_id', Auth::id())
-            ->where('company_profile_id', $companyProfile->id)
-            ->first();
-
-        if ($existingReview) {
-            return redirect()->back()->with('error', 'You have already reviewed this company.');
-        }
-
+        // Create a new review without checking for existing ones
         Review::create([
             'jobseeker_id' => Auth::id(),
             'company_profile_id' => $companyProfile->id,

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\CompanyDashboardController;
 use App\Http\Controllers\JobListingController;
 use App\Http\Controllers\ApplicationController;
 use App\Http\Controllers\Profile\CompanyProfileController;
@@ -23,6 +24,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+        // Jobseeker 
+    Route::get('/jobs/applied', [JobListingController::class, 'appliedJobs'])->name('jobs.applied');
+    Route::get('/jobs/confirmed', [JobListingController::class, 'confirmedJobs'])->name('jobs.confirmed');
+    Route::delete('/applications/{application}/undo', [JobListingController::class, 'undoApplication'])->name('applications.undo')->middleware('auth');
 });
 
 // Profile Creation Routes
@@ -34,16 +39,50 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('/company/profile/create', [CompanyProfileController::class, 'create'])->name('company.profile.create');
     Route::post('/company/profile', [CompanyProfileController::class, 'store'])->name('company.profile.store');
+    Route::get('/company/dashboard', [CompanyDashboardController::class, 'index'])->name('company.dashboard');
+
+    Route::get('/company/applications', [CompanyDashboardController::class, 'applications'])->name('company.applications');
+    Route::get('/company/applications/{application}', [CompanyDashboardController::class, 'showApplication'])->name('applications.show');
+    Route::patch('/company/applications/{application}/status/{status}', [CompanyDashboardController::class, 'updateStatus'])->name('applications.update-status');
+    
     Route::get('/company/profile/edit', [CompanyProfileController::class, 'edit'])->name('company.profile.edit');
     Route::put('/company/profile', [CompanyProfileController::class, 'update'])->name('company.profile.update');
     Route::get('/company/profile/{companyProfile}', [CompanyProfileController::class, 'show'])->name('company-profiles.show');
     Route::get('/jobseeker/profile/{jobseekerProfile}', [JobseekerProfileController::class, 'show'])->name('jobseeker-profiles.show');
 });
 
-// General Job Listings Routes
+// Job Listings - Public routes
+Route::get('/job-listings', [JobListingController::class, 'index'])->name('job-listings.index');
+Route::get('/job-listings/{jobListing}', [JobListingController::class, 'show'])->name('job-listings.show');
+Route::get('/job-listings/{jobListing}/apply', [JobListingController::class, 'apply'])->name('job-listings.apply.form');
+Route::post('/job-listings/{jobListing}/apply', [JobListingController::class, 'apply'])->name('job-listings.apply.submit');
+
+// Job Listings Routes
 Route::middleware(['auth'])->group(function () {
-    Route::get('/job-listings', [JobListingController::class, 'index'])->name('job-listings.index');
-    Route::get('/job-listings/{jobListing}', [JobListingController::class, 'show'])->name('job-listings.show');
+    // Create Job Listing
+    Route::get('/job-listings/create', [JobListingController::class, 'create'])
+        ->name('job-listings.create');
+        
+    // Store Job Listing
+    Route::post('/job-listings', [JobListingController::class, 'store'])
+        ->name('job-listings.store');
+    
+    // Other Job Listings Routes
+    Route::get('/applications', [ApplicationController::class, 'index'])
+        ->middleware(\App\Http\Middleware\CompanyProfileMiddleware::class)
+        ->name('applications.index');
+        
+    Route::get('/job-listings/{jobListing}/edit', [JobListingController::class, 'edit'])
+        ->name('job-listings.edit');
+        
+    Route::put('/job-listings/{jobListing}', [JobListingController::class, 'update'])
+        ->name('job-listings.update');
+        
+    Route::delete('/job-listings/{jobListing}', [JobListingController::class, 'destroy'])
+        ->name('job-listings.destroy');
+        
+    Route::get('/job-listings/{jobListing}/applications', [JobListingController::class, 'applications'])
+        ->name('job-listings.applications');
 });
 
 // Job Application Routes - Separate from company routes
@@ -51,24 +90,6 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/job-listings/{jobListing}/apply', [JobListingController::class, 'apply'])->name('job-listings.apply.form');
     Route::post('/job-listings/{jobListing}/apply', [JobListingController::class, 'apply'])->name('job-listings.apply.submit');
 });
-
-// Company-specific Job Listings Routes
-Route::middleware(['auth', 'company.profile'])->group(function () {
-    Route::get('/job-listings/create', [JobListingController::class, 'create'])->name('job-listings.create');
-    Route::post('/job-listings', [JobListingController::class, 'store'])->name('job-listings.store');
-    Route::get('/job-listings/{jobListing}/edit', [JobListingController::class, 'edit'])->name('job-listings.edit');
-    Route::put('/job-listings/{jobListing}', [JobListingController::class, 'update'])->name('job-listings.update');
-    Route::delete('/job-listings/{jobListing}', [JobListingController::class, 'destroy'])->name('job-listings.destroy');
-    Route::get('/job-listings/{jobListing}/applications', [JobListingController::class, 'applications'])->name('job-listings.applications');
-});
-
-// Applications Routes
-Route::middleware(['auth', 'company.profile'])->group(function () {
-    Route::get('/applications', [ApplicationController::class, 'index'])->name('applications.index');
-    Route::get('/applications/{application}', [ApplicationController::class, 'show'])->name('applications.show');
-    Route::put('/applications/{application}/status', [ApplicationController::class, 'updateStatus'])->name('applications.update-status');
-});
-
 // Browse routes
 Route::get('/browse', [BrowseController::class, 'index'])->name('browse.index');
 

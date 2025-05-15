@@ -6,7 +6,7 @@
             </h2>
             @auth
                 @if(auth()->user()->role === 'Jobseeker')
-                    <button onclick="openReviewModal()" class="inline-flex items-center px-4 py-2 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 transition-colors duration-200">
+                    <button onclick="openReviewModal()" class="inline-flex items-center px-4 py-2 bg-yellow-500 text-black rounded-lg hover:bg-yellow-600 transition-colors duration-200">
                         <i class="fas fa-star mr-2"></i>
                         {{ $companyProfile->reviews->where('jobseeker_id', auth()->id())->count() ? 'My Review' : 'Write a Review' }}
                     </button>
@@ -17,8 +17,8 @@
 
     <!-- Review Modal -->
     <div id="reviewModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden overflow-y-auto h-full w-full">
-        <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
-            <div class="mt-3">
+        <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-lg bg-white">
+            <div class="mt-5">
                 @auth
                     @if(auth()->user()->role === 'Jobseeker')
                         @php
@@ -26,13 +26,15 @@
                         @endphp
 
                         @if($userReview)
-                            <!-- Edit/Delete Review Form -->
-                            <h3 class="text-lg font-medium text-gray-900 mb-4">My Review</h3>
+                        <!-- Header -->
+                            <div class="bg-blue-900 text-black p-4 rounded-lg mb-4">
+                                <h3 class="text-lg font-medium mb-0">My Review</h3>
+                            </div>
                             <form action="{{ route('reviews.update', $userReview) }}" method="POST" class="space-y-4">
                                 @csrf
                                 @method('PUT')
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700">Rating</label>
+                                <div class=" p-2">
+                                    <label class="ml-3 block text-sm font-medium text-gray-700">Rating</label>
                                     <div class="mt-1 flex items-center">
                                         @for($i = 1; $i <= 5; $i++)
                                             <input type="radio" name="rating" value="{{ $i }}" id="rating{{ $i }}" 
@@ -44,17 +46,17 @@
                                     </div>
                                 </div>
 
-                                <div>
+                                <div class="p-2">
                                     <label for="comment" class="block text-sm font-medium text-gray-700">Comment</label>
                                     <textarea name="comment" id="comment" rows="4" 
                                         class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                                         required>{{ old('comment', $userReview->comment) }}</textarea>
                                 </div>
 
-                                <div class="flex justify-between">
-                                    <button type="submit" class="inline-flex items-center px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700">
+                                <!-- <div class="p-2 flex justify-between">
+                                     <button type="submit" class="inline-flex items-center px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700">
                                         Update Review
-                                    </button>
+                                    </button> -->
                                     <form action="{{ route('reviews.destroy', $userReview) }}" method="POST" class="inline">
                                         @csrf
                                         @method('DELETE')
@@ -63,7 +65,7 @@
                                             Delete Review
                                         </button>
                                     </form>
-                                </div>
+                                </div> 
                             </form>
                         @else
                             <!-- New Review Form -->

@@ -28,10 +28,14 @@
                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-pink-600 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                                         </svg>
-                                        <a href="/company/{{ $job->companyProfile->id }}" 
-                                           class="text-lg font-semibold text-pink-600 hover:text-pink-700 hover:underline">
-                                            {{ $job->companyProfile->company_name }}
-                                        </a>
+                                        @if($job->companyProfile)
+                                            <a href="/company/{{ $job->companyProfile->id }}" 
+                                               class="text-lg font-semibold text-pink-600 hover:text-pink-700 hover:underline">
+                                                {{ $job->companyProfile->company_name }}
+                                            </a>
+                                        @else
+                                            <span class="text-lg font-semibold text-gray-500">Company Not Found</span>
+                                        @endif
                                     </div>
                                 </div>
                                 
@@ -40,7 +44,7 @@
                                         <h4 class="text-xl font-bold text-indigo-900">{{ $job->title }}</h4>
                                         <p class="text-sm text-indigo-600 mt-1">
                                             <span class="font-semibold">Location:</span> 
-                                            {{ $job->companyProfile->location }}
+                                            {{ $job->companyProfile ? $job->companyProfile->location : 'Location not available' }}
                                         </p>
                                     </div>
                                     <div class="text-right">
@@ -77,13 +81,7 @@
                                             </svg>
                                             View Details
                                         </a>
-                                        <a href="{{ route('job-listings.apply', $job) }}" 
-                                           class="inline-flex items-center px-4 py-2 bg-pink-600 text-white rounded-lg hover:bg-pink-700 transition-colors duration-200">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-                                            </svg>
-                                            Apply Now
-                                        </a>
+                                        <<a href="{{ route('job-listings.apply.form', $jobListing) }}" class="btn btn-primary flex items-center px-4 py-2 bg-pink-600 text-white rounded-lg hover:bg-pink-700 transition-colors duration-200"> Apply Now</a>
                                     </div>
                                 </div>
                             </div>

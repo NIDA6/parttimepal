@@ -14,11 +14,13 @@ class CompanyProfile extends Model
     protected $fillable = [
         'user_id',
         'company_name',
-        'email',
-        'phone',
+        'description',
+        'company_email',
+        'phone_number',
         'location',
-        'establish_date',
-        'description'
+        'establish_date',	
+        'website_url',
+        
     ];
 
     protected $casts = [

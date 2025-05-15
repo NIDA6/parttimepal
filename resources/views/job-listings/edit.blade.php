@@ -47,17 +47,8 @@
                                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                     <span class="text-gray-500 sm:text-sm">$</span>
                                 </div>
-                                <x-text-input id="salary" name="salary" type="number" step="0.01" min="0" max="99999999.99"
+                                <x-text-input id="salary" name="salary" type="text"
                                     class="pl-7 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" 
-                                    :value="old('salary', $jobListing->salary)" required />
-                            </div>
-                            <x-input-label for="salary" :value="__('Salary')" class="text-base font-semibold text-pink-600" />
-                            <div class="mt-2 relative rounded-xl shadow-sm">
-                                <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                                    <span class="text-pink-600 sm:text-sm font-medium">$</span>
-                                </div>
-                                <x-text-input id="salary" name="salary" type="text" 
-                                    class="pl-8 block w-full rounded-xl border-indigo-200/50 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-base bg-white/50 backdrop-blur-sm transition-all duration-200 hover:border-indigo-300 focus:shadow-md" 
                                     :value="old('salary', $jobListing->salary)" required />
                             </div>
                             <x-input-error class="mt-2" :messages="$errors->get('salary')" />

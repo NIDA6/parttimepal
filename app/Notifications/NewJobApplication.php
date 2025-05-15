@@ -29,9 +29,9 @@ class NewJobApplication extends Notification implements ShouldQueue
         return [
             'application_id' => $this->application->id,
             'job_listing_id' => $this->application->job_listing_id,
-            'jobseeker_name' => $this->application->name,
+            'jobseeker_name' => $this->application->full_name,
             'job_title' => $this->application->jobListing->title,
-            'message' => "New application received from {$this->application->name} for {$this->application->jobListing->title}",
+            'message' => "New application received from {$this->application->full_name} for {$this->application->jobListing->title}",
             'type' => 'job_application'
         ];
     }

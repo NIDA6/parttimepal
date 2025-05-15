@@ -17,7 +17,6 @@ class BrowseController extends Controller
 
         $companies = collect();
         $jobseekers = collect();
-
         if (!empty($search)) {
             if ($type === 'all' || $type === 'companies') {
                 $companies = User::where('role', 'Company')

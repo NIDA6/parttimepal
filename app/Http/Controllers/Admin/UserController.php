@@ -67,7 +67,7 @@ class UserController extends Controller
 
     public function destroyJobseeker(User $user)
     {
-        if ($user->role !== 'jobseeker') {
+        if ($user->role !== 'Jobseeker') {
             return redirect()->route('admin.jobseekers')
                 ->with('error', 'Invalid user type.');
         }
@@ -96,7 +96,7 @@ class UserController extends Controller
 
     public function destroyCompany(User $user)
     {
-        if ($user->role !== 'company') {
+        if ($user->role !== 'Company') {
             return redirect()->route('admin.companies')
                 ->with('error', 'Invalid user type.');
         }

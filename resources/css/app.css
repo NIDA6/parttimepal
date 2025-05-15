@@ -2,7 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Fix browser compatibility issues */
+
 html {
     -webkit-text-size-adjust: 100%;
     -moz-text-size-adjust: 100%;
@@ -10,7 +10,7 @@ html {
     text-size-adjust: 100%;
 }
 
-/* Ensure buttons and links are accessible */
+/* make buttons and links accessible */
 button, a {
     cursor: pointer;
 }

@@ -18,8 +18,6 @@
                 <div class="p-6">
                     <!-- Salary Information -->
                     <div class="mb-8">
-                        <h3 class="text-lg font-semibold text-indigo-900 mb-2">Salary</h3>
-                        <p class="text-2xl font-bold text-indigo-600">${{ number_format($jobListing->salary) }}/year</p>
                         <h1 class="text-3xl font-bold text-indigo-900 mb-4">{{ $jobListing->title }}</h1>
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                             <div class="bg-indigo-50 p-4 rounded-lg">
@@ -50,13 +48,9 @@
                         <h3 class="text-lg font-semibold text-indigo-900 mb-4">Requirements</h3>
                         <div class="prose max-w-none">
                             {{ $jobListing->requirements }}
-                        <h2 class="text-xl font-bold text-indigo-900 mb-4">Responsibilities</h2>
-                        <div class="prose max-w-none">
-                            <p class="text-gray-700">{{ $jobListing->responsibilities }}</p>
                         </div>
                     </div>
 
-                    <!-- Responsibilities -->
                     <!-- Requirements -->
                     <div class="mb-8">
                         <h3 class="text-lg font-semibold text-indigo-900 mb-4">Responsibilities</h3>
@@ -89,7 +83,7 @@
                             <span>Back to Dashboard</span>
                         </a>
                         @if(auth()->user()->role === 'Jobseeker')
-                        <a href="{{ route('job-listings.apply', $jobListing) }}" class="btn btn-primary"> Apply Now</a>
+                        <a href="{{ route('job-listings.apply.form', $jobListing) }}" class="btn btn-primary"> Apply Now</a>
                         @endif
                     </div>
                 </div>

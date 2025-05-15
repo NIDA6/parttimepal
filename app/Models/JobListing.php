@@ -9,9 +9,10 @@ use App\Notifications\JobseekerShortlisted;
 
 class JobListing extends Model
 {
-    use HasFactory, Notifiable;
+    use HasFactory;
 
     protected $fillable = [
+        'company_profile_id',
         'title',
         'description',
         'requirements',
@@ -19,7 +20,6 @@ class JobListing extends Model
         'salary',
         'job_time',
         'additional_message',
-        'company_profile_id',
         'application_link',
     ];
 
